@@ -13,7 +13,7 @@ jobs:
         - after
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install dependencies (as main.yml's Linux gcc job)
       run: sudo apt-get update -y && sudo apt-get install -y autoconf libtool make pkg-config gcc g++
     - name: Configure (as main.yml's Linux gcc job)
