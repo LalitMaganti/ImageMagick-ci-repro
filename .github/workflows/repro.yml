@@ -11,6 +11,9 @@ jobs:
         variant:
         - before
         - after
+        mode:
+        - untraced
+        - traced
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -29,9 +32,19 @@ jobs:
         ./configure --with-quantum-depth=16 --enable-hdri=no --without-perl --prefix=/usr
 
         '
+    - name: Build (untraced, timed)
+      if: matrix.mode == 'untraced'
+      shell: bash
+      run: 'if [ "${{ matrix.variant }}" = after ]; then J=-j$(getconf _NPROCESSORS_ONLN); fi
+
+        make $J
+
+        make $J check
+
+        '
     - uses: LalitMaganti/buildprof@v0.2.8
       with:
-        artifact-name: imagemagick-${{ matrix.variant }}
+        artifact-name: imagemagick-${{ matrix.variant }}-${{ matrix.mode }}
         command: 'if [ "${{ matrix.variant }}" = after ]; then J=-j$(getconf _NPROCESSORS_ONLN); fi
 
           make $J
@@ -39,3 +52,4 @@ jobs:
           make $J check
 
           '
+      if: matrix.mode == 'traced'
